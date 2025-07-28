@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ベースのカスタマイズ */
+body {
+  @apply font-sans text-base text-white;
+  background-color: transparent; /* ← 埋め込み用に透明化 */
+  overflow: visible;
+}
+
+/* 推奨フォント構成：Apple系・Web系に最適でプロ感あり */
+@layer base {
+  html, body, button, input, textarea {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+  }
+}
+
+/* 入力エリアのスタイル */
+input,
+textarea {
+  @apply bg-transparent border-none text-white placeholder-gray-400 focus:outline-none;
+}
+
+/* スクロールバー非表示（必要に応じて） */
+/*
+::-webkit-scrollbar {
+  display: none;
+}
+*/
+
+/* アニメーションやカスタムクラス */
+@keyframes bounce-wiggle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(1.5deg);
+  }
+  50% {
+    transform: translateY(1px) rotate(-1.5deg);
+  }
+  75% {
+    transform: translateY(-1px) rotate(1deg);
+  }
+}
+
+.animate-bounce-wiggle {
+  animation: bounce-wiggle 2.2s ease-in-out infinite;
+}
