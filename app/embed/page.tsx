@@ -222,6 +222,14 @@ export default function EmbedPage() {
             <CircleHelp className="w-6 h-6 hover:scale-125 transition-transform duration-200" />
           </button>
         )}
+
+
+
+
+
+
+
+        
       </div>
     </div>
   );
