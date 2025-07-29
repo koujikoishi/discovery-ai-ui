@@ -63,13 +63,13 @@ const ChatMessage: React.FC<Props> = ({ role, content, isLatest }) => {
                   <h3 className="text-base font-semibold mt-2 mb-2">{children}</h3>
                 ),
                 p: ({ children }) => (
-                  <p className="mb-0 leading-snug">{children}</p>
+                  <p className="mb-0 leading-snug text-sm">{children}</p>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc pl-6 mt-[-10px] mb-0">{children}</ul>
+                  <ul className="mt-[-16px] mb-0 pl-5 list-disc text-sm">{children}</ul>
                 ),
                 li: ({ children }) => (
-                  <li className="leading-relaxed mt-[-15px]">{children}</li>
+                  <li className="leading-relaxed mt-[-12px]">{children}</li>
                 ),
                 blockquote: ({ children }) => (
                   <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-400 my-2">
