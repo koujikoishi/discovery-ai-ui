@@ -9,10 +9,11 @@ body {
   overflow: visible;
 }
 
-/* 推奨フォント構成：Apple系・Web系に最適でプロ感あり */
+/* 柔らかく整った印象 */
 @layer base {
   html, body, button, input, textarea {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-family: 'Noto Sans Variable', 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', 'Arial', sans-serif !important;
+    font-weight: 300;
   }
 }
 
@@ -29,7 +30,67 @@ textarea {
 }
 */
 
-/* アニメーションやカスタムクラス */
+/* スライドアップとフェードのアニメーション */
+@keyframes slideUpFade {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideUpFade {
+  animation: slideUpFade 0.6s ease-out;
+}
+
+/* フェードイン＋上昇のアニメーション */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tailwind ユーティリティクラスとして登録 */
+@layer utilities {
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+  }
+}
+
+/* subtleBounce（拡大＋傾き＋上下ゆらぎ） */
+@keyframes subtleBounce {
+  0% {
+    transform: scale(1) rotate(0deg) translateY(0px);
+  }
+  20% {
+    transform: scale(1.02) rotate(-1deg) translateY(-0.6px);
+  }
+  50% {
+    transform: scale(1.15) rotate(2deg) translateY(0.5px);
+  }
+  80% {
+    transform: scale(1.02) rotate(-1deg) translateY(-0.5px);
+  }
+  100% {
+    transform: scale(1) rotate(0deg) translateY(0px);
+  }
+}
+
+/* Tailwindで使えるようにするためのユーティリティ */
+.animate-subtleBounce {
+  animation: subtleBounce 2.5s ease-in-out infinite;
+}
+
+/* 予備：カスタムアニメーション候補（コメントアウト中） */
+/*
 @keyframes bounce-wiggle {
   0%, 100% {
     transform: translateY(0) rotate(0deg);
@@ -48,3 +109,4 @@ textarea {
 .animate-bounce-wiggle {
   animation: bounce-wiggle 2.2s ease-in-out infinite;
 }
+*/

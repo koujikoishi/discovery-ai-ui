@@ -19,6 +19,7 @@ export default function EmbedPage() {
   const [isOpen, setIsOpen] = useState(true);
   const [team, setTeam] = useState('');
   const [purpose, setPurpose] = useState('');
+  const [showThinkingDots, setShowThinkingDots] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -91,8 +92,8 @@ export default function EmbedPage() {
 
     setMessages(updatedMessages);
     setInput('');
-    setIsLoading(true);
     setRelatedQuestions([]);
+    setShowThinkingDots(true);
 
     try {
       const data = await postChat(userMessage, updatedHistory, team, purpose);
@@ -116,12 +117,12 @@ export default function EmbedPage() {
         setMessages((prev) => [...prev, botMessage]);
         setChatHistory(data.updatedHistory || []);
         setRelatedQuestions(data.relatedQuestions || []);
-        setIsLoading(false);
+        setShowThinkingDots(false);
         setIsFirstVisit(false);
       }, 600);
     } catch (error) {
       console.error('送信エラー:', error);
-      setIsLoading(false);
+      setShowThinkingDots(false);
     }
   };
 
@@ -130,9 +131,9 @@ export default function EmbedPage() {
   }, [messages]);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-full max-w-[420px]">
+    <div className="fixed bottom-6 right-6 z-50 w-full max-w-[420px] sm:bottom-2 sm:right-2">
       {isOpen && (
-        <div className="flex flex-col w-full bg-black text-white rounded-[24px] shadow-[0_0_30px_rgba(0,0,0,0.5)] h-[calc(100vh-90px)] overflow-hidden">
+        <div className="flex flex-col w-full bg-black text-white rounded-[24px] shadow-[0_0_30px_rgba(0,0,0,0.5)] h-[calc(100vh-90px)] overflow-hidden transition-all duration-500 ease-out animate-fadeInUp">
           <ChatHeader onReset={handleReset} resetButtonClassName="text-[13px]" />
           <div className="flex-1 px-4 pt-10 overflow-y-auto flex flex-col">
             {isFirstVisit && messages.length === 1 ? (
@@ -142,7 +143,7 @@ export default function EmbedPage() {
                   alt="bot icon"
                   width={32}
                   height={32}
-                  className={`mb-5 ${isFirstVisit ? 'animate-bounce-wiggle' : ''}`}
+                  className={`mb-5 ${isFirstVisit ? 'animate-subtleBounce' : ''}`}
                 />
                 <p className="text-2xl font-bold mb-2">こんにちは。</p>
                 <p className="text-base text-gray-400 mb-6">
@@ -156,7 +157,7 @@ export default function EmbedPage() {
                     <ChatMessage role={msg.role} content={msg.content} />
                   </div>
                 ))}
-                {isLoading && <ThinkingDots />}
+                {showThinkingDots && <ThinkingDots />}
                 <div ref={messagesEndRef} className="mb-0" />
               </>
             )}
@@ -165,7 +166,7 @@ export default function EmbedPage() {
           {relatedQuestions.length > 0 && (
             <div className="px-4 pt-2 pb-5 border-t border-[#3d4451] bg-black">
               <RelatedQuestions
-                questions={relatedQuestions}
+                questions={relatedQuestions.slice(0, 3)}
                 onSelect={(q) => handleSend(q)}
                 isFirstVisit={isFirstVisit}
               />

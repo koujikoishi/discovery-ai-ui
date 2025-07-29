@@ -22,7 +22,11 @@ const extractDisplayText = (content: ChatMessageProps['content']): string | null
   return null;
 };
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ role, content }) => {
+interface Props extends ChatMessageProps {
+  isLatest?: boolean;
+}
+
+const ChatMessage: React.FC<Props> = ({ role, content, isLatest }) => {
   const isBot = role === 'assistant';
   const displayContent = extractDisplayText(content);
 
@@ -39,12 +43,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ role, content }) => {
       )}
 
       <div
-        className={`px-4 py-2 rounded-lg text-sm max-w-[80%] whitespace-pre-wrap ${
-          isBot ? 'bg-neutral-800 text-white' : 'bg-blue-600 text-white'
+        className={`px-4 py-2 rounded-lg text-sm max-w-[80%] whitespace-pre-wrap transition-all duration-300 ease-out ${
+          isBot
+            ? `bg-neutral-800 text-white ${isLatest ? 'animate-fadeInUp' : ''}`
+            : 'bg-blue-600 text-white'
         }`}
       >
-        {displayContent && (
-          isBot ? (
+        {displayContent &&
+          (isBot ? (
             <ReactMarkdown
               components={{
                 h1: ({ children }) => (
@@ -71,14 +77,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ role, content }) => {
                   </blockquote>
                 ),
                 code: ({ className, children }) =>
-                  className ? (
-                    <pre className="bg-gray-900 text-white p-3 rounded-md text-sm overflow-x-auto">
-                      <code className={className}>{children}</code>
-                    </pre>
-                  ) : (
+                  typeof children === 'string' ? (
                     <code className="bg-gray-700 text-white px-1 py-0.5 rounded text-sm">
                       {children}
                     </code>
+                  ) : (
+                    <>{children}</>
                   ),
                 table: ({ children }) => (
                   <div className="overflow-x-auto my-2">
@@ -116,8 +120,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ role, content }) => {
             </ReactMarkdown>
           ) : (
             <div>{displayContent}</div>
-          )
-        )}
+          ))}
       </div>
     </div>
   );
