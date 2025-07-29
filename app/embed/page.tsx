@@ -131,7 +131,7 @@ export default function EmbedPage() {
   }, [messages]);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-full max-w-[420px] sm:bottom-2 sm:right-2">
+    <div className="fixed bottom-6 right-6 z-50 w-[calc(100%-1rem)] max-w-[420px] sm:bottom-2 sm:right-2 sm:w-full">
       {isOpen && (
         <div className="flex flex-col w-full bg-black text-white rounded-[24px] shadow-[0_0_30px_rgba(0,0,0,0.5)] h-[calc(100vh-90px)] overflow-hidden transition-all duration-500 ease-out animate-fadeInUp">
           <ChatHeader onReset={handleReset} resetButtonClassName="text-[13px]" />
