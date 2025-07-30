@@ -34,7 +34,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "components/ChatHeader.bak", "app/embed/page copy.bak"  ],
   "exclude": [
     "node_modules"
   ]

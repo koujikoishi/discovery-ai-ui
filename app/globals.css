@@ -9,6 +9,15 @@ body {
   overflow: visible;
 }
 
+/* スマホ入力エリア拡大防止 */
+@layer base {
+  input,
+  textarea {
+    font-size: 16px !important; /* iOSズーム回避のため */
+  }
+}
+
+
 /* 柔らかく整った印象 */
 @layer base {
   html, body, button, input, textarea {

@@ -1,6 +1,10 @@
 import { ChatMessageProps } from '@/components/types';
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
+// 環境変数からAPIベースURLを選択（スマホIPとPCで切り替え）
+const baseUrl =
+  typeof window !== 'undefined' && window.location.hostname === '192.168.3.8'// KoujiKoishi
+    ? process.env.NEXT_PUBLIC_API_MOBILE_URL
+    : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
 
 export async function postChat(
   message: string,
@@ -11,7 +15,7 @@ export async function postChat(
   const res = await fetch(`${baseUrl}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', // ← ここを追加
+    credentials: 'include',
     body: JSON.stringify({ message, history, team, purpose }),
   });
 
