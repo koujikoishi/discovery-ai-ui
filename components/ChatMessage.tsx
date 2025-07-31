@@ -54,25 +54,27 @@ const ChatMessage: React.FC<Props> = ({ role, content, isLatest }) => {
             <ReactMarkdown
               components={{
                 h1: ({ children }) => (
-                  <h1 className="text-xl font-bold mt-2 mb-2">{children}</h1>
+                  <h1 className="text-base font-bold mt-1 mb-2">{children}</h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-lg font-semibold mt-2 mb-2">{children}</h2>
+                  <h2 className="text-base font-semibold mt-1 mb-2">{children}</h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-base font-semibold mt-2 mb-2">{children}</h3>
+                  <h3 className="text-sm font-medium mt-1 mb-1">{children}</h3>
                 ),
                 p: ({ children }) => (
-                  <p className="mb-0 leading-snug text-sm">{children}</p>
+                  <p className="mb-0 leading-snug">{children}</p>
                 ),
                 ul: ({ children }) => (
-                  <ul className="mt-[-16px] mb-0 pl-5 list-disc text-sm">{children}</ul>
+                  <ul className="list-disc pl-5 mt-[-20px] mb-0">{children}</ul>
                 ),
                 li: ({ children }) => (
-                  <li className="leading-relaxed mt-[-12px]">{children}</li>
+                  <li className="leading-snug mt-[-10px] [&>*:first-child]:mb-[-10px]">
+                    {children}
+                  </li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-400 my-2">
+                  <blockquote className="border-l-4 border-gray-500 pl-3 italic text-gray-400 my-1">
                     {children}
                   </blockquote>
                 ),
@@ -106,13 +108,15 @@ const ChatMessage: React.FC<Props> = ({ role, content, isLatest }) => {
                 td: ({ children }) => (
                   <td className="border border-gray-600 px-3 py-1">{children}</td>
                 ),
-                a: ({ node, ...props }) => (
+                a: ({ children, ...props }) => (
                   <a
                     {...props}
-                    className="text-blue-400 underline hover:text-blue-300 transition"
+                    className="inline-flex items-center gap-1 text-blue-400 underline hover:text-blue-300 transition"
                     target="_blank"
                     rel="noopener noreferrer"
-                  />
+                  >
+                    🔗{children}
+                  </a>
                 ),
               }}
             >

@@ -41,17 +41,23 @@ textarea {
 
 
 /* 画面幅ではなく、デバイスの種類（hover可否やポインターの精度）で分岐 */
+/* スマホやタブレット */
 @media (hover: none) and (pointer: coarse) {
-  /* スマホやタブレット用の padding */
   .pt-desktop {
-    padding-top: 120px;
+    padding-top: 90px; /* ← 初回ロゴ用（ちょっとだけ下） */
+  }
+  .pt-chat {
+    padding-top: 110px; /* ← 投稿メッセージ領域もずらす */
   }
 }
 
+/* PC（マウスあり） */
 @media (hover: hover) and (pointer: fine) {
-  /* PC（マウス操作可能な環境） */
   .pt-desktop {
-    padding-top: 30px;
+    padding-top: 170px; /* ← 初回ロゴ用 */
+  }
+  .pt-chat {
+    padding-top: 20px; /* ← 投稿メッセージ領域も揃える */
   }
 }
 

@@ -1,3 +1,5 @@
+// app/embed/page.tsx
+
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -6,8 +8,8 @@ import RelatedQuestions from '@/components/RelatedQuestions';
 import ThinkingDots from '@/components/ThinkingDots';
 import ChatHeader from '@/components/ChatHeader';
 import { ChatMessageProps } from '@/components/types';
-import { CircleHelp } from 'lucide-react';
 import { postChat } from '@/utils/postChat';
+import ChatToggleButton from '@/components/ChatToggleButton';
 
 export default function EmbedPage() {
   const [messages, setMessages] = useState<ChatMessageProps[]>([]);
@@ -23,34 +25,35 @@ export default function EmbedPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('chatMessages');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as ChatMessageProps[];
-        setMessages(parsed);
-        setChatHistory(parsed);
-        setIsFirstVisit(false);
-      } catch {}
-    }
+  // 初期化（localStorage読み込み）
+useEffect(() => {
+  const stored = localStorage.getItem('chatMessages');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored) as ChatMessageProps[];
+      setMessages(parsed);
+      setChatHistory(parsed);
+      if (parsed.length > 0) {
+        setIsFirstVisit(false); // ← 条件付きにする
+      }
+    } catch {}
+  }
     const t = localStorage.getItem('team');
     const p = localStorage.getItem('purpose');
     if (t) setTeam(t);
     if (p) setPurpose(p);
   }, []);
 
+  // 保存
   useEffect(() => {
     localStorage.setItem('chatMessages', JSON.stringify(messages));
   }, [messages]);
 
+  // 初回訪問UI表示用
   useEffect(() => {
     if (isFirstVisit) {
-      const welcome: ChatMessageProps = {
-        role: 'assistant',
-        content: 'こんにちは。何かお手伝いできることはありますか？',
-      };
-      setMessages([welcome]);
-      setChatHistory([welcome]);
+      setMessages([]);
+      setChatHistory([]);
       setRelatedQuestions([
         'Discovery AIの料金を教えてください',
         'どうやって導入を始めればいいですか？',
@@ -60,23 +63,14 @@ export default function EmbedPage() {
   }, [isFirstVisit]);
 
   const handleReset = () => {
-    const welcome: ChatMessageProps = {
-      role: 'assistant',
-      content: 'こんにちは。何かお手伝いできることはありますか？',
-    };
-    setMessages([welcome]);
-    setChatHistory([welcome]);
-    setRelatedQuestions([
-      'Discovery AIの料金を教えてください',
-      'どうやって導入を始めればいいですか？',
-      'どのプランが自分に合っていますか？',
-    ]);
-    setIsFirstVisit(true);
     localStorage.removeItem('chatMessages');
     localStorage.removeItem('team');
     localStorage.removeItem('purpose');
     setTeam('');
     setPurpose('');
+    setIsFirstVisit(true);
+    setMessages([]);
+    setChatHistory([]);
   };
 
   const handleSend = async (message?: string) => {
@@ -118,7 +112,7 @@ export default function EmbedPage() {
         setChatHistory(data.updatedHistory || []);
         setRelatedQuestions(data.relatedQuestions || []);
         setShowThinkingDots(false);
-        setIsFirstVisit(false);
+        setIsFirstVisit(false); // チャットが始まったので以降は初回扱いしない
       }, 600);
     } catch (error) {
       console.error('送信エラー:', error);
@@ -140,23 +134,22 @@ export default function EmbedPage() {
               onClose={() => setIsOpen(false)}
               resetButtonClassName="text-[13px]"
             />
-            <div className="flex-1 px-4 pt-desktop overflow-y-auto flex flex-col">
-              {isFirstVisit && messages.length === 1 ? (
-              <div className="pt-desktop px-4 flex flex-col items-center text-center">
-                {/* ↑ SPのときだけ100pxの余白を確保、PCではpt-0 */}
-                <img
-                  src="/boticon.svg"
-                  alt="bot icon"
-                  width={32}
-                  height={32}
-                  className={`mb-5 ${isFirstVisit ? 'animate-subtleBounce' : ''}`}
-                />
-                <p className="text-2xl font-bold mb-2">こんにちは。</p>
-                <p className="text-base text-gray-400 mb-6">
-                  何かお手伝いできることはありますか？
-                </p>
-              </div>
-            ) : (
+            <div className="flex-1 px-4 pt-chat overflow-y-auto flex flex-col">
+              {isFirstVisit && messages.length === 0 ? (
+                <div className="pt-desktop px-4 flex flex-col items-center text-center">
+                  <img
+                    src="/boticon.svg"
+                    alt="bot icon"
+                    width={32}
+                    height={32}
+                    className="mb-5 animate-subtleBounce"
+                  />
+                  <p className="text-2xl font-bold mb-2">こんにちは。</p>
+                  <p className="text-base text-gray-400 mb-6">
+                    何かお手伝いできることはありますか？
+                  </p>
+                </div>
+              ) : (
                 <>
                   {messages.map((msg, index) => (
                     <div key={index} className="mb-4">
@@ -211,17 +204,7 @@ export default function EmbedPage() {
         </div>
       )}
 
-      {!isOpen && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <button
-            onClick={() => setIsOpen(true)}
-            className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center shadow-md"
-            aria-label="Open Chat"
-          >
-            <CircleHelp className="w-6 h-6 hover:scale-125 transition-transform duration-200" />
-          </button>
-        </div>
-      )}
+      {!isOpen && <ChatToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />}
     </>
   );
 }
