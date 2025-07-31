@@ -39,6 +39,23 @@ textarea {
 }
 */
 
+
+/* 画面幅ではなく、デバイスの種類（hover可否やポインターの精度）で分岐 */
+@media (hover: none) and (pointer: coarse) {
+  /* スマホやタブレット用の padding */
+  .pt-desktop {
+    padding-top: 120px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* PC（マウス操作可能な環境） */
+  .pt-desktop {
+    padding-top: 30px;
+  }
+}
+
+
 /* スライドアップとフェードのアニメーション */
 @keyframes slideUpFade {
   0% {

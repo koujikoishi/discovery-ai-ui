@@ -140,22 +140,23 @@ export default function EmbedPage() {
               onClose={() => setIsOpen(false)}
               resetButtonClassName="text-[13px]"
             />
-            <div className="flex-1 px-4 pt-10 overflow-y-auto flex flex-col">
+            <div className="flex-1 px-4 pt-desktop overflow-y-auto flex flex-col">
               {isFirstVisit && messages.length === 1 ? (
-                <div className="flex flex-col items-center justify-center flex-grow pt-[15vh] pb-10 min-h-[300px]">
-                  <img
-                    src="/boticon.svg"
-                    alt="bot icon"
-                    width={32}
-                    height={32}
-                    className={`mb-5 ${isFirstVisit ? 'animate-subtleBounce' : ''}`}
-                  />
-                  <p className="text-2xl font-bold mb-2">こんにちは。</p>
-                  <p className="text-base text-gray-400 mb-6">
-                    何かお手伝いできることはありますか？
-                  </p>
-                </div>
-              ) : (
+              <div className="pt-desktop px-4 flex flex-col items-center text-center">
+                {/* ↑ SPのときだけ100pxの余白を確保、PCではpt-0 */}
+                <img
+                  src="/boticon.svg"
+                  alt="bot icon"
+                  width={32}
+                  height={32}
+                  className={`mb-5 ${isFirstVisit ? 'animate-subtleBounce' : ''}`}
+                />
+                <p className="text-2xl font-bold mb-2">こんにちは。</p>
+                <p className="text-base text-gray-400 mb-6">
+                  何かお手伝いできることはありますか？
+                </p>
+              </div>
+            ) : (
                 <>
                   {messages.map((msg, index) => (
                     <div key={index} className="mb-4">

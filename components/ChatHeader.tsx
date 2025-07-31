@@ -14,8 +14,7 @@ export default function ChatHeader({
   resetButtonClassName = '',
 }: ChatHeaderProps) {
   return (
-    // <div className="sm:sticky sm:top-0 sm:z-50 bg-black rounded-t-[24px] flex justify-between items-center px-4 py-2 border-b border-gray-700">
-     <div className="sticky top-0 z-50 bg-black rounded-t-[24px] flex justify-between items-center px-4 py-2 border-b border-gray-700">
+     <div className="sticky top-0 z-50 flex justify-between items-center px-4 py-2 border-b border-gray-700">
       <h2 className="text-base font-semibold text-white">Discovery AI Support</h2>
       <div className="flex items-center space-x-5">
         <button
