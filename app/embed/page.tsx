@@ -22,55 +22,91 @@ export default function EmbedPage() {
   const [team, setTeam] = useState('');
   const [purpose, setPurpose] = useState('');
   const [showThinkingDots, setShowThinkingDots] = useState(false);
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 初期化（localStorage読み込み）
-useEffect(() => {
-  const stored = localStorage.getItem('chatMessages');
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored) as ChatMessageProps[];
-      setMessages(parsed);
-      setChatHistory(parsed);
-      if (parsed.length > 0) {
-        setIsFirstVisit(false); // ← 条件付きにする
-      }
-    } catch {}
-  }
+  useEffect(() => {
+    const storedMessages = localStorage.getItem('chatMessages');
+    const storedHistory = localStorage.getItem('chatHistory');
+    const storedRelated = localStorage.getItem('relatedQuestions');
+    const open = localStorage.getItem('isOpen');
     const t = localStorage.getItem('team');
     const p = localStorage.getItem('purpose');
+
+    if (storedMessages) {
+      try {
+        const parsedMessages = JSON.parse(storedMessages) as ChatMessageProps[];
+        setMessages(parsedMessages);
+        if (parsedMessages.length > 0) {
+          setIsFirstVisit(false);
+        }
+      } catch {
+        console.warn('⚠️ メッセージ復元に失敗');
+      }
+    }
+
+    if (storedHistory) {
+      try {
+        const parsedHistory = JSON.parse(storedHistory) as ChatMessageProps[];
+        setChatHistory(parsedHistory);
+      } catch {
+        console.warn('⚠️ 履歴復元に失敗');
+      }
+    }
+
+    if (storedRelated) {
+      try {
+        const parsedRelated = JSON.parse(storedRelated) as string[];
+        setRelatedQuestions(parsedRelated);
+      } catch {
+        console.warn('⚠️ 関連質問復元に失敗');
+      }
+    }
+
     if (t) setTeam(t);
     if (p) setPurpose(p);
+    if (open === 'true') setIsOpen(true);
   }, []);
 
-  // 保存
   useEffect(() => {
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
-  }, [messages]);
-
-  // 初回訪問UI表示用
-  useEffect(() => {
-    if (isFirstVisit) {
-      setMessages([]);
-      setChatHistory([]);
+    const shouldShow = isFirstVisit && isOpen && messages.length === 0;
+    if (shouldShow) {
       setRelatedQuestions([
         'Discovery AIの料金を教えてください',
         'どうやって導入を始めればいいですか？',
         'どのプランが自分に合っていますか？',
       ]);
     }
-  }, [isFirstVisit]);
+  }, [isFirstVisit, isOpen, messages.length]);
+
+  useEffect(() => {
+    localStorage.setItem('chatMessages', JSON.stringify(messages));
+  }, [messages]);
+
+  useEffect(() => {
+    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+  }, [chatHistory]);
+
+  useEffect(() => {
+    localStorage.setItem('isOpen', isOpen.toString());
+  }, [isOpen]);
+
+  useEffect(() => {
+    localStorage.setItem('relatedQuestions', JSON.stringify(relatedQuestions));
+  }, [relatedQuestions]);
 
   const handleReset = () => {
     localStorage.removeItem('chatMessages');
+    localStorage.removeItem('chatHistory');
     localStorage.removeItem('team');
     localStorage.removeItem('purpose');
+    localStorage.removeItem('isOpen');
+    localStorage.removeItem('relatedQuestions');
     setTeam('');
     setPurpose('');
     setIsFirstVisit(true);
     setMessages([]);
     setChatHistory([]);
+    setRelatedQuestions([]);
   };
 
   const handleSend = async (message?: string) => {
@@ -85,6 +121,7 @@ useEffect(() => {
     const updatedHistory = [...chatHistory, newMessage];
 
     setMessages(updatedMessages);
+    setChatHistory(updatedHistory);
     setInput('');
     setRelatedQuestions([]);
     setShowThinkingDots(true);
@@ -108,11 +145,12 @@ useEffect(() => {
       }
 
       setTimeout(() => {
-        setMessages((prev) => [...prev, botMessage]);
-        setChatHistory(data.updatedHistory || []);
+        const newMessages = [...updatedMessages, botMessage];
+        setMessages(newMessages);
+        setChatHistory(data.updatedHistory || updatedHistory);
         setRelatedQuestions(data.relatedQuestions || []);
         setShowThinkingDots(false);
-        setIsFirstVisit(false); // チャットが始まったので以降は初回扱いしない
+        setIsFirstVisit(false);
       }, 600);
     } catch (error) {
       console.error('送信エラー:', error);
