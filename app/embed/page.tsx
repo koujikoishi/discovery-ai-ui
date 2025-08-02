@@ -25,47 +25,51 @@ export default function EmbedPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const storedMessages = localStorage.getItem('chatMessages');
-    const storedHistory = localStorage.getItem('chatHistory');
-    const storedRelated = localStorage.getItem('relatedQuestions');
-    const open = localStorage.getItem('isOpen');
-    const t = localStorage.getItem('team');
-    const p = localStorage.getItem('purpose');
+  const storedMessages = localStorage.getItem('chatMessages');
+  const storedHistory = localStorage.getItem('chatHistory');
+  const storedRelated = localStorage.getItem('relatedQuestions');
+  const open = localStorage.getItem('isOpen');
+  const t = localStorage.getItem('team');
+  const p = localStorage.getItem('purpose');
 
-    if (storedMessages) {
-      try {
-        const parsedMessages = JSON.parse(storedMessages) as ChatMessageProps[];
-        setMessages(parsedMessages);
-        if (parsedMessages.length > 0) {
-          setIsFirstVisit(false);
-        }
-      } catch {
-        console.warn('⚠️ メッセージ復元に失敗');
-      }
+  let parsedMessages: ChatMessageProps[] = [];
+  let parsedHistory: ChatMessageProps[] = [];
+
+  if (storedMessages) {
+    try {
+      parsedMessages = JSON.parse(storedMessages) as ChatMessageProps[];
+      setMessages(parsedMessages);
+    } catch {
+      console.warn('⚠️ メッセージ復元に失敗');
     }
+  }
 
-    if (storedHistory) {
-      try {
-        const parsedHistory = JSON.parse(storedHistory) as ChatMessageProps[];
-        setChatHistory(parsedHistory);
-      } catch {
-        console.warn('⚠️ 履歴復元に失敗');
-      }
+  if (storedHistory) {
+    try {
+      parsedHistory = JSON.parse(storedHistory) as ChatMessageProps[];
+      setChatHistory(parsedHistory);
+    } catch {
+      console.warn('⚠️ 履歴復元に失敗');
     }
+  }
 
-    if (storedRelated) {
-      try {
-        const parsedRelated = JSON.parse(storedRelated) as string[];
-        setRelatedQuestions(parsedRelated);
-      } catch {
-        console.warn('⚠️ 関連質問復元に失敗');
-      }
+  if (parsedMessages.length > 0 || parsedHistory.length > 0) {
+    setIsFirstVisit(false);
+  }
+
+  if (storedRelated) {
+    try {
+      const parsedRelated = JSON.parse(storedRelated) as string[];
+      setRelatedQuestions(parsedRelated);
+    } catch {
+      console.warn('⚠️ 関連質問復元に失敗');
     }
+  }
 
-    if (t) setTeam(t);
-    if (p) setPurpose(p);
-    if (open === 'true') setIsOpen(true);
-  }, []);
+  if (t) setTeam(t);
+  if (p) setPurpose(p);
+  if (open === 'true') setIsOpen(true);
+}, []);
 
   useEffect(() => {
     const shouldShow = isFirstVisit && isOpen && messages.length === 0;
@@ -94,20 +98,29 @@ export default function EmbedPage() {
     localStorage.setItem('relatedQuestions', JSON.stringify(relatedQuestions));
   }, [relatedQuestions]);
 
-  const handleReset = () => {
-    localStorage.removeItem('chatMessages');
-    localStorage.removeItem('chatHistory');
-    localStorage.removeItem('team');
-    localStorage.removeItem('purpose');
-    localStorage.removeItem('isOpen');
-    localStorage.removeItem('relatedQuestions');
-    setTeam('');
-    setPurpose('');
-    setIsFirstVisit(true);
-    setMessages([]);
-    setChatHistory([]);
-    setRelatedQuestions([]);
-  };
+const handleReset = () => {
+  localStorage.removeItem('chatMessages');
+  localStorage.removeItem('chatHistory');
+  localStorage.removeItem('team');
+  localStorage.removeItem('purpose');
+  localStorage.removeItem('isOpen');
+  localStorage.removeItem('relatedQuestions');
+
+  localStorage.setItem('isFirstVisit', 'true');
+
+  setTeam('');
+  setPurpose('');
+  setIsFirstVisit(true);
+  setMessages([]);
+  setChatHistory([]);
+  setRelatedQuestions([]);
+
+  // ✅ isOpen を false→true に一瞬だけ切り替えて、初回状態を正しく再描画
+  setIsOpen(false);
+  setTimeout(() => {
+    setIsOpen(true);
+  }, 0);
+};
 
   const handleSend = async (message?: string) => {
     const userMessage = (message || input).trim();
